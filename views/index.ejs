@@ -1,0 +1,156 @@
+<%- include('header.ejs') %>
+
+
+    <main class="weather-info-wrapper">
+
+        <div class="form-wrapper">
+            <form action="/" method="post" id="form">
+                <input type="search" name="q" id="query" autocomplete="off" placeholder="Enter Location" id="srch-box">
+                
+                <button type="submit" id="search-btn" class="my-button"><i
+                        class="fa-solid fa-magnifying-glass"></i></button>
+                        <!-- <div id="autocomplete-container"></div> -->
+            </form>
+            <!-- <span id="unit">℃</span> -->
+        </div>
+
+        <div class="w-details-wrapper">
+            <div class="loader" style="<%= isLoading ? '' : 'display: none;' %>">
+                Loading...
+              </div>
+                        <div class="w-details" style="<%= isLoading ? 'display: none;' : '' %>">
+                            <div class="curr-time">
+                                <b>Current Weather </b>
+                                <p><i>
+                                        <%= data.name %> , <%= data.region%>
+                                    </i></p>
+                                <p>
+                                    <%= data.localtime %>
+                                </p>
+                            </div>
+
+
+                            <div class="temp-details">
+
+                                <img src='<%=data.icon %>' alt="icn" />
+                                <h2 id="temperature">
+                                    <%= data.temp_c %><sup>℃</sup>
+                                </h2>
+                                <div class="conditions">
+                                    <b>
+                                        <%= data.text %>
+                                    </b>
+                                    <p>Feels Like <%=data.temp_c %> <sup>℃</sup></p>
+                                </div>
+                            </div>
+
+
+                            <div class="w-text">
+                                <%= data.text %>. The low will be <%=data.mintemp_c%>
+                            </div>
+
+                            <div class="w-indices">
+                                <!-- AQI -->
+                                <div id="aqi">
+                                    <p>Air Quality</p>
+                                    <span>
+                                        <%= data.pm10 %>
+                                    </span>
+
+                                    <% let bg_color; if (data.pm10>= 0 && data.pm10 <= 40) { bg_color='lightgreen' ; }
+                                            else if (data.pm10 <=120) { bg_color='orange' ; } else { bg_color='red' ; }
+                                            %>
+
+                                            <span id="strength"
+                                                style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; box-shadow:1px 1px 4px rgb(78, 77, 77);  background-color: <%= bg_color %>;"></span>
+                                </div>
+
+                                <!-- Wind -->
+
+                                <div id="wind">
+                                    <p>Wind</p>
+                                    <%= data.windspeed %> km/h
+
+                                </div>
+
+                                <!-- humidity -->
+                                <div id="humidity">
+                                    <p>Humidity</p>
+                                    <p>
+                                        <%=data.humidity %>
+                                    </p>
+                                </div>
+
+                                <!-- visibility -->
+                                <div id="visibility">
+                                    <p>Visibility</p>
+                                    <p>
+                                        <%=data.vis_km %> km
+                                    </p>
+                                </div>
+
+                                <!-- pressure -->
+                                <div id="pressure">
+                                    <p>Precip</p>
+                                    <p>
+                                        <%=data.precip_in %>%
+                                    </p>
+                                </div>
+                                <!-- w-indices ends -->
+                            </div>
+
+                            <!-- w-details-wrapper ends  -->
+                        </div>
+
+                        <div class="hourly-details-wrapper">
+                            <h2 style="text-align: center;">Hourly Forecast</h2>
+                            <br>
+                            <div class="hourly-details">
+
+
+                                <% let arr=data.forecast_array; arr.forEach((day)=> {
+
+                                    day.hour.forEach((hr) => {
+
+                                    %>
+                                    <div class="hourly-weather-wrapper">
+
+                                        <span>
+                                            <%= hr.time %>
+                                        </span>
+                                        <div class="imgIcn">
+                                            <img src=<%=hr.condition.icon %> alt=<%= hr.condition.text %>>
+                                        </div>
+                                        <p style="font-size: large;">
+                                            <b>
+                                                <%= hr.temp_c %> <sup>°C</sup>
+                                            </b>
+                                        </p>
+                                        <br>
+                                        <p>
+                                            <i>
+                                                <%= hr.condition.text %>
+                                            </i>
+                                        </p>
+                                        <p>
+                                            <%= hr.wind_kph %> km/h
+                                        </p>
+                                    </div>
+
+
+                                    <% }); }); %>
+                            </div>
+
+                        </div>
+
+                        <!--hourly forcast slider ends -->
+        </div>
+     
+    </main>
+
+    </div>
+
+    <script src="app.js"></script>
+    </body>
+
+    </html>
