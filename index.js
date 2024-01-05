@@ -1,41 +1,37 @@
 const express = require('express');
-const app = express();
 const axios = require('axios').default;
+const path = require('path');
+const nodemailer = require('nodemailer');
+const geoip = require('geoip-lite');
 require('dotenv').config();
 
-// using parsing
-const bodyParser = require('body-parser');
+const app = express();
+
 app.use(express.urlencoded({ extended: true }));
-
-// getting middle wares
-const path = require('path');
 app.use(express.static(path.join(__dirname, 'views')));
-
-// setting up view engine
-let ejs = require('ejs');
-app.set('view engine', ejs);
+app.set('view engine', 'ejs');
 
 const PORT = process.env.PORT;
 const API_KEY = process.env.API_KEY;
+const EMAIL_ADD = process.env.EMAIL_ADD;
+const EMAIL_PASS = process.env.EMAIL_PASS;
 
-// getting location
-var geoip = require('geoip-lite');
+let data = {
+    forecast_array: [],
+};
 
-let q = "chandigarh";
-let data = {};
-let isLoading = false;
+let isLoading = true;
+let error = false;
 
-const forcast = 'forecast.json';
-const future = 'future.json';
 
-const url = `https://api.weatherapi.com/v1/`;
-
+const url = process.env.URL;
 
 const result = async (q) => {
-    isLoading = true; 
+    error = false;
     try {
-
-        const response = await axios.get(url + forcast + `?key=${API_KEY}` + `&q=${q}` + `&days=3&aqi=yes&alerts=yes`);
+        const response = await axios.get(
+            url + `?key=${API_KEY}` + `&q=${q}` + `&days=3&aqi=yes&alerts=yes`
+        );
         data = {
             name: response.data.location.name,
             region: response.data.location.region,
@@ -57,35 +53,79 @@ const result = async (q) => {
 
             pm10: response.data.current.air_quality.pm10,
 
-            forecast_array:response.data.forecast.forecastday,
+            forecast_array: response.data.forecast.forecastday,
         };
     } catch (e) {
-        console.log('Error is Found ' + e);
-    } finally {
-        isLoading = false; 
+        error = true;
+        console.log('no internet');
+    }
+};
+
+// Create Nodemailer transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: EMAIL_ADD,
+        pass: EMAIL_PASS,
+    },
+});
+
+// Function to send feedback email
+async function sendMail(details) {
+    const { email, name, feedback } = details;
+
+    try {
+        const info = await transporter.sendMail({
+            from: EMAIL_ADD,
+            to: email, EMAIL_ADD,
+            subject: 'Thanks for Feedback!',
+            text: `Hello ${name}, I will surely look into it.`,
+            html: `<body>Your Feedback matters </br>to me: ${feedback}</body>`,
+        });
+        console.log('Email sent:', info.response);
+    } catch (error) {
+        console.error('Error sending email:', error);
     }
 }
 
-app.get('/', async (req, res) => {
+app.get("/", async (req, res) => {
     const ip = req.socket.remoteAddress;
     const geo = geoip.lookup(ip);
 
     await result(geo);
+    if (error) {
+        return res.send('Please check the Internet and try again');
+    }
+    res.render('index.ejs', { data, isLoading });
+})
+
+app.get('/weather', async (req, res) => {
+
     res.render('index.ejs', { data, isLoading });
 });
 
-app.post('/', async (req, res) => {
-    q = req.body.q;
-    q = q.trim();
+
+app.post('/weather', async (req, res) => {
+    const q = req.body.q.trim();
     if (!q) {
         return;
+    }
+    await result(q);
+    if (error) {
+        res.send('Error rendering page. Check the Internet and try again.');
     } else {
-        await result(q);
-        res.render('index.ejs', { data, isLoading });
+        res.redirect("/weather");
     }
 });
 
-// listening route
+
+// Feedback route 
+app.post('/feedback', (req, res) => {
+    const details = req.body;
+    sendMail(details);
+    res.redirect('/');
+});
+
 app.listen(PORT, () => {
-    console.log(`"Listening at ${PORT}"`);
+    console.log(`Listening at ${PORT}`);
 });
