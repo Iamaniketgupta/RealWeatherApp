@@ -1,13 +1,29 @@
-<div class="loader"></div> 
+<div class="loader-wrapper">
+  <div class="loader"></div>
+</div> 
 <style>
 
 
+
+  .loader-wrapper{
+    background-color: rgb(255, 255, 255);
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 10;
+    overflow: hidden;
+
+  }
 .loader {
-    width: 80px;
-    height: 40px;
+    width: 150px;
+    height: 80px;
     border-radius: 100px 100px 0 0;
     position: relative;
     overflow: hidden;
+    background-color: #ecfefe;
   }
   .loader:before {
     content: "";

@@ -1,7 +1,5 @@
-const search ='search.json';
-const url =`https://api.weatherapi.com/v1/`;
 
-
+// Nav Tab functionality
 let listItems = document.querySelectorAll('.list-item');
 
 for (let item of listItems) {
@@ -26,7 +24,6 @@ const clickAnyWhere=document.querySelector('.weather-info-wrapper');
 
 bars.addEventListener('click',()=>{
     nav.classList.toggle('display-nav');
- console.log('url is  : ' + URL);
 
 });
 
@@ -39,6 +36,7 @@ clickAnyWhere.addEventListener('click',()=>{
 });
 
 // Locator Feature
+
 const inputBox=document.querySelector('#query');
 const form=document.querySelector('#form');
 const srchBtn=document.querySelector('#search-btn');
@@ -58,7 +56,7 @@ function getLocation() {
                 q = `${latitude},${longitude}`;
                 inputBox.value = q;
                 form.submit();
-                console.log('Coordinates:', q);
+               
             },
             (error) => {
                 console.error('Error getting location:', error.message);
@@ -71,8 +69,41 @@ function getLocation() {
 }
 
 
-  
 
+// Auto Complete Search Feature
+let container = document.getElementById('autocomplete-container');
+container.style.display = "none";
 
+let timeoutId;
+const debouncedAutosearch = (q_string) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => autosearchHandler(q_string), 300);
+};
 
+const autosearchHandler = async (q_string) => {
+    container.innerHTML = '';
+
+    try {
+        const response = await fetch(`/autocomplete?q=${q_string}`);
+        const data = await response.json();
+
+        if (data.length > 0) {
+            container.style.display = "block";
+            data.forEach((item) => {
+                const placeElement = document.createElement('p');
+                placeElement.textContent = `${item.name}, ${item.region}, ${item.country}`;
+                placeElement.addEventListener('click', () => {
+                    inputBox.value = item.name + "," + item.region;
+                    container.style.display = "none";
+                    form.submit();
+                });
+                container.append(placeElement);
+            });
+        } else {
+            container.style.display = "none";
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};
 

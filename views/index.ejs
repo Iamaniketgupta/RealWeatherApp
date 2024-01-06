@@ -16,148 +16,155 @@
 </head>
 
 <body>
+    <% if(isLoading) { %>
+        <%- include('loader.ejs') %>
+            <%} else if(!isLoading) { %>
 
-    <div class="main-wrapper">
-        <%- include('header.ejs') %>
-            <main class="weather-info-wrapper">
+                <div class="main-wrapper">
+                    <%- include('header.ejs') %>
+                        <main class="weather-info-wrapper">
 
-                <div class="form-wrapper">
-                    <form action="/weather" method="post" id="form">
-                        <input type="search" name="q" id="query" autocomplete="off" placeholder="Enter Location"
-                            id="srch-box" minlength="3" required>
+                            <div class="form-wrapper">
+                                <form action="/weather" method="post" id="form">
+                                    <input type="search" name="q" id="query" autocomplete="off"
+                                        placeholder="Enter Location"
+                                        oninput="debouncedAutosearch(this.value)"  id="srch-box"
+                                        minlength="3" required>
+                                    <button type="submit" id="search-btn" class="my-button"><i
+                                            class="fa-solid fa-magnifying-glass"></i></button></form>
 
-                        <button type="submit" id="search-btn" class="my-button"><i
-                                class="fa-solid fa-magnifying-glass"></i></button>
-                        <!-- <div id="autocomplete-container"></div> -->
-                    </form>
-                    <div class="location" id="location"><i class="fa-solid fa-location-dot"></i></div>
-                    <!-- <span id="unit">℃</span> -->
-                </div>
-
-                <div class="w-details-wrapper" id="weather">
-                    <div class="w-details">
-                        <div class="curr-time">
-                            <b>Current Weather </b>
-                            <p><i>
-                                    <%= data.name %> , <%= data.region%>
-                                </i></p>
-                            <p>
-                                <%= data.localtime %>
-                            </p>
-                        </div>
-
-                        <div class="temp-details">
-
-                            <img src='<%=data.icon %>' alt="icn" />
-                            <h2 id="temperature">
-                                <%= data.temp_c %><sup>℃</sup>
-                            </h2>
-                            <div class="conditions">
-                                <b>
-                                    <%= data.text %>
-                                </b>
-                                <p>Feels Like <%=data.temp_c %> <sup>℃</sup></p>
+                                <div class="location" id="location"><i class="fa-solid fa-location-dot"></i></div>
                             </div>
-                        </div>
+                            <div class="autocompler-container-wrapper">
+                                <div id="autocomplete-container"></div>
+                            </div>
+                           
+                            <div class="w-details-wrapper" id="weather">
+                                <div class="w-details">
+                                    <div class="curr-time"> 
+                                        <b>Current Weather </b>
+                                        <p><i>
+                                                <%= data.name %> , <%= data.region%>
+                                            </i></p>
+                                        <p>
+                                            <%= data.localtime %>
+                                        </p>
+                                    </div>
+
+                                    <div class="temp-details">
+
+                                        <img src='<%=data.icon %>' alt="icn" />
+                                        <h2 id="temperature">
+                                            <%= data.temp_c %><sup>℃</sup>
+                                        </h2>
+                                        <div class="conditions">
+                                            <b>
+                                                <%= data.text %>
+                                            </b>
+                                            <p>Feels Like <%=data.temp_c %> <sup>℃</sup></p>
+                                        </div>
+                                    </div>
 
 
-                        <div class="w-text">
-                            <%= data.text %>. The low will be <%=data.mintemp_c%>
-                        </div>
+                                    <div class="w-text">
+                                        <%= data.text %>. The low will be <%=data.mintemp_c%>
+                                    </div>
 
-                        <div class="w-indices">
-                            <!-- AQI -->
-                            <div id="aqi">
-                                <p>Air Quality</p>
-                                <span>
-                                    <%= data.pm10 %>
-                                </span>
+                                    <div class="w-indices">
+                                        <!-- AQI -->
+                                        <div id="aqi">
+                                            <p>Air Quality</p>
+                                            <span>
+                                                <%= data.pm10 %>
+                                            </span>
 
-                                <span id="strength" class="aqi-strength" style="background-color:
+                                            <span id="strength" class="aqi-strength" style="background-color:
                         /*
                         <% if (data.pm10 >= 0 && data.pm10 <= 40) { %>*/green/*<% } 
                         else if (data.pm10 <= 120) { %>*/orange/*<% } 
                         else { %>*/red/*<% } %>*/;">
-                                </span>
+                                            </span>
 
-                            </div>
-                            <!-- Wind -->
-                            <div id="wind">
-                                <p>Wind</p>
-                                <p>
-                                    <%= data.windspeed %> km/h
-                                </p>
-                            </div>
+                                        </div>
+                                        <!-- Wind -->
+                                        <div id="wind">
+                                            <p>Wind</p>
+                                            <p>
+                                                <%= data.windspeed %> km/h
+                                            </p>
+                                        </div>
 
-                            <!-- humidity -->
-                            <div id="humidity">
-                                <p>Humidity</p>
-                                <p>
-                                    <%= data.humidity %>
-                                </p>
-                            </div>
+                                        <!-- humidity -->
+                                        <div id="humidity">
+                                            <p>Humidity</p>
+                                            <p>
+                                                <%= data.humidity %>
+                                            </p>
+                                        </div>
 
-                            <!-- visibility -->
-                            <div id="visibility">
-                                <p>Visibility</p>
-                                <p>
-                                    <%= data.vis_km %> km
-                                </p>
-                            </div>
+                                        <!-- visibility -->
+                                        <div id="visibility">
+                                            <p>Visibility</p>
+                                            <p>
+                                                <%= data.vis_km %> km
+                                            </p>
+                                        </div>
 
-                            <!-- pressure -->
-                            <div id="pressure">
-                                <p>Precip</p>
-                                <p>
-                                    <%= data.precip_in %>
-                                </p>
-                            </div>
-                        </div>
-                        <!-- w-indices ends -->
-                    </div>
-                    <!-- w-details-wrapper ends  -->
-
-
-                    <div class="hourly-details-wrapper">
-                        <h2 style="text-align: center; margin-top:15px">Hourly Forecast</h2>
-                        <br>
-                        <div class="hourly-details">
-                            <% let arr=data.forecast_array; arr.forEach((day)=> {
-                                day.hour.forEach((hr) => { %>
-                                <div class="hourly-weather-wrapper">
-                                    <span>
-                                        <%= hr.time %>
-                                    </span>
-                                    <div class="imgIcn">
-                                        <img src="<%= hr.condition.icon %>" alt="<%= hr.condition.text %>" />
+                                        <!-- pressure -->
+                                        <div id="pressure">
+                                            <p>Precip</p>
+                                            <p>
+                                                <%= data.precip_in %>
+                                            </p>
+                                        </div>
                                     </div>
-                                    <p style="font-size: large; color: #ffc02c;"> <b>
-                                            <%= hr.temp_c %> <sup>°C</sup>
-                                        </b> </p>
-                                    <br>
-                                    <p>
-                                        <%= hr.condition.text %>
-                                    </p>
-                                    <p>
-                                        <%= hr.wind_kph %> km/h
-                                    </p>
+                                    <!-- w-indices ends -->
                                 </div>
-                                <% }); }); %>
+                                <!-- w-details-wrapper ends  -->
 
-                        </div>
-                    </div>
-                    <!--hourly forcast slider ends -->
+
+                                <div class="hourly-details-wrapper">
+                                    <h2 style="text-align: center; margin-top:15px">Hourly Forecast</h2>
+                                    <br>
+                                    <div class="hourly-details">
+                                        <% let arr=data.forecast_array; arr.forEach((day)=> {
+                                            day.hour.forEach((hr) => { %>
+                                            <div class="hourly-weather-wrapper">
+                                                <span>
+                                                    <%= hr.time %>
+                                                </span>
+                                                <div class="imgIcn">
+                                                    <img src="<%= hr.condition.icon %>"
+                                                        alt="<%= hr.condition.text %>" />
+                                                </div>
+                                                <p style="font-size: large; color: #ffc02c;"> <b>
+                                                        <%= hr.temp_c %> <sup>°C</sup>
+                                                    </b> </p>
+                                                <br>
+                                                <p>
+                                                    <%= hr.condition.text %>
+                                                </p>
+                                                <p>
+                                                    <%= hr.wind_kph %> km/h
+                                                </p>
+                                            </div>
+                                            <% }); }); %>
+
+                                    </div>
+                                </div>
+                                <!--hourly forcast slider ends -->
+
+                            </div>
+
+                        </main>
+
+                        <%- include('about.ejs') %>
+                            <%- include('footer.ejs') %>
 
                 </div>
 
-            </main>
-
-            <%- include('about.ejs') %>
-                <%- include('footer.ejs') %>
-
-    </div>
-
-    <script src="app.js"></script>
+                <%}%>
+                    <script src="app.js"></script>
 </body>
 
 </html>

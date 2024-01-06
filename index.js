@@ -20,15 +20,16 @@ let data = {
     forecast_array: [],
 };
 
-let isLoading = true;
+
 let error = false;
 
-
+const auto_search =process.env.S_URL;
 const url = process.env.URL;
-
+ 
 const result = async (q) => {
     error = false;
     try {
+        
         const response = await axios.get(
             url + `?key=${API_KEY}` + `&q=${q}` + `&days=3&aqi=yes&alerts=yes`
         );
@@ -55,6 +56,9 @@ const result = async (q) => {
 
             forecast_array: response.data.forecast.forecastday,
         };
+
+     
+
     } catch (e) {
         error = true;
         console.log('no internet');
@@ -89,6 +93,7 @@ async function sendMail(details) {
 }
 
 app.get("/", async (req, res) => {
+
     const ip = req.socket.remoteAddress;
     const geo = geoip.lookup(ip);
 
@@ -96,12 +101,12 @@ app.get("/", async (req, res) => {
     if (error) {
         return res.send('Please check the Internet and try again');
     }
-    res.render('index.ejs', { data, isLoading });
+    res.render('index.ejs', { data});
 })
 
+// weather search routes
 app.get('/weather', async (req, res) => {
-
-    res.render('index.ejs', { data, isLoading });
+    res.render('index.ejs', { data});
 });
 
 
@@ -111,11 +116,13 @@ app.post('/weather', async (req, res) => {
         return;
     }
     await result(q);
-    if (error) {
-        res.send('Error rendering page. Check the Internet and try again.');
-    } else {
+    // if (error) {
+    //     res.send('Error rendering page. Check the Internet and try again.');
+    // } else {
+    //     res.redirect("/weather");
+    // }
         res.redirect("/weather");
-    }
+
 });
 
 
@@ -125,6 +132,21 @@ app.post('/feedback', (req, res) => {
     sendMail(details);
     res.redirect('/');
 });
+
+// autocomplete route
+app.get('/autocomplete', async (req, res) => {
+    try {
+        const q = req.query.q;
+        const response = await axios.get(`${auto_search}&q=${q}`);
+        const autocompleteData = response.data; 
+ 
+        res.json(autocompleteData);
+    } catch (error) {
+        console.error('Autocomplete error:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+ 
 
 app.listen(PORT, () => {
     console.log(`Listening at ${PORT}`);
