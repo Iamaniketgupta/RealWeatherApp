@@ -16,10 +16,6 @@
 </head>
 
 <body>
-    <% if(isLoading) { %>
-        <%- include('loader.ejs') %>
-            <%} else if(!isLoading) { %>
-
                 <div class="main-wrapper">
                     <%- include('header.ejs') %>
                         <main class="weather-info-wrapper">
@@ -163,8 +159,8 @@
 
                 </div>
 
-                <%}%>
-                    <script src="app.js"></script>
+
+   <script src="app.js"></script>
 </body>
 
 </html>

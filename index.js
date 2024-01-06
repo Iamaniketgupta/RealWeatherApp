@@ -15,23 +15,21 @@ const PORT = process.env.PORT;
 const API_KEY = process.env.API_KEY;
 const EMAIL_ADD = process.env.EMAIL_ADD;
 const EMAIL_PASS = process.env.EMAIL_PASS;
+const auto_search =process.env.S_URL;
+const url = process.env.API_URL;
 
 let data = {
     forecast_array: [],
 };
-
-
+  
 let error = false;
 
-const auto_search =process.env.S_URL;
-const url = process.env.URL;
- 
 const result = async (q) => {
     error = false;
     try {
-        
-        const response = await axios.get(
+            const response = await axios.get(
             url + `?key=${API_KEY}` + `&q=${q}` + `&days=3&aqi=yes&alerts=yes`
+
         );
         data = {
             name: response.data.location.name,
@@ -57,11 +55,9 @@ const result = async (q) => {
             forecast_array: response.data.forecast.forecastday,
         };
 
-     
-
     } catch (e) {
         error = true;
-        console.log('no internet');
+        console.log('Error :  ' +e);
     }
 };
 
@@ -84,7 +80,7 @@ async function sendMail(details) {
             to: email, EMAIL_ADD,
             subject: 'Thanks for Feedback!',
             text: `Hello ${name}, I will surely look into it.`,
-            html: `<body>Your Feedback matters </br>to me: ${feedback}</body>`,
+            html: `<html><body> Your Feedback matters </br> to me: ${feedback}</body> </html>`,
         });
         console.log('Email sent:', info.response);
     } catch (error) {
@@ -99,14 +95,14 @@ app.get("/", async (req, res) => {
 
     await result(geo);
     if (error) {
-        return res.send('Please check the Internet and try again');
+        return res.send('server is not responding, try again');
     }
-    res.render('index.ejs', { data});
+    res.render('index.ejs', {data});
 })
 
 // weather search routes
 app.get('/weather', async (req, res) => {
-    res.render('index.ejs', { data});
+    res.render('index.ejs', {data});
 });
 
 
@@ -116,15 +112,14 @@ app.post('/weather', async (req, res) => {
         return;
     }
     await result(q);
-    // if (error) {
-    //     res.send('Error rendering page. Check the Internet and try again.');
-    // } else {
-    //     res.redirect("/weather");
-    // }
+    if (error) {
+        res.send('Error rendering page. Check the Internet and try again.');
+    } else {
         res.redirect("/weather");
+    }
 
 });
-
+ 
 
 // Feedback route 
 app.post('/feedback', (req, res) => {
@@ -136,9 +131,9 @@ app.post('/feedback', (req, res) => {
 // autocomplete route
 app.get('/autocomplete', async (req, res) => {
     try {
-        const q = req.query.q;
-        const response = await axios.get(`${auto_search}&q=${q}`);
-        const autocompleteData = response.data; 
+        const qry = req.query.q;
+        const respond = await axios.get(`${auto_search}?key=${API_KEY}&q=${qry}`);
+        const autocompleteData = respond.data; 
  
         res.json(autocompleteData);
     } catch (error) {
