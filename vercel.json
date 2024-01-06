@@ -1,45 +1,17 @@
 {
-    "headers": [
+    "version": 1,
+    "builds": [
       {
-        "source": "/index.js",
-        "headers": [
-          {
-            "key": "Cache-Control",
-            "value": "public, max-age=0, must-revalidate"
-          }
-        ]
-      },
+        "src": "index.js",
+        "use": "@now/node"
+      }
+    ],
+    "routes": [
       {
-        "source": "/(.*)",
-        "headers": [
-          {
-            "key": "X-Content-Type-Options",
-            "value": "nosniff"
-          },
-          {
-            "key": "X-Frame-Options",
-            "value": "DENY"
-          },
-          {
-            "key": "X-XSS-Protection",
-            "value": "1; mode=block"
-          }
-        ]
-      },
-      {
-        "source": "/:path*",
-        "has": [
-          {
-            "type": "query",
-            "key": "authorized"
-          }
-        ],
-        "headers": [
-          {
-            "key": "x-authorized",
-            "value": "true"
-          }
-        ]
+       
+        "src": "/(.*)",
+        
+        "dest": "index.js"
       }
     ]
   }
