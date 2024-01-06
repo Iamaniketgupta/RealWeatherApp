@@ -22,13 +22,11 @@ let data = {
     forecast_array: [],
 };
   
-let error = false;
-
 const result = async (q) => {
     error = false;
     try {
             const response = await axios.get(
-            url + `?key=${API_KEY}` + `&q=${q}` + `&days=3&aqi=yes&alerts=yes`
+            `${url}?key=${API_KEY}&q=${q}&days=3&aqi=yes&alerts=yes`
         );
         data = {
             name: response.data.location.name,
@@ -55,8 +53,7 @@ const result = async (q) => {
         };
 
     } catch (e) {
-        error = true;
-        console.log('Error :  ' +e);
+        console.log(e);
     }
 };
 
@@ -89,19 +86,10 @@ async function sendMail(details) {
 
 app.get("/", async (req, res) => {
 
-    try{
-
         const ip = req.socket.remoteAddress;
         const geo = geoip.lookup(ip);
         await result(geo);
-    }
-    catch(e){
-       console.log(e); 
-    }
 
-    if (error) {
-         console.error('server is not responding, try again');
-    }
     res.render('index.ejs', {data});
 })
 
@@ -117,11 +105,9 @@ app.post('/weather', async (req, res) => {
         return;
     }
     await result(q);
-    if (error) {
-        res.send('Error rendering page. Check the Internet and try again.');
-    } else {
-        res.redirect("/weather");
-    }
+   
+    res.redirect("/weather");
+    
 
 });
  
