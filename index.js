@@ -29,7 +29,6 @@ const result = async (q) => {
     try {
             const response = await axios.get(
             url + `?key=${API_KEY}` + `&q=${q}` + `&days=3&aqi=yes&alerts=yes`
-
         );
         data = {
             name: response.data.location.name,
@@ -101,7 +100,7 @@ app.get("/", async (req, res) => {
     }
 
     if (error) {
-        return res.send('server is not responding, try again');
+         console.error('server is not responding, try again');
     }
     res.render('index.ejs', {data});
 })
