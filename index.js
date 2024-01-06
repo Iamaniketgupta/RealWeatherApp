@@ -11,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'views')));
 app.set('view engine', 'ejs');
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8000;
 const API_KEY = process.env.API_KEY;
 const EMAIL_ADD = process.env.EMAIL_ADD;
 const EMAIL_PASS = process.env.EMAIL_PASS;
