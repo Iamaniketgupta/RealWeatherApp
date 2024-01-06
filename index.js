@@ -90,10 +90,16 @@ async function sendMail(details) {
 
 app.get("/", async (req, res) => {
 
-    const ip = req.socket.remoteAddress;
-    const geo = geoip.lookup(ip);
+    try{
 
-    await result(geo);
+        const ip = req.socket.remoteAddress;
+        const geo = geoip.lookup(ip);
+        await result(geo);
+    }
+    catch(e){
+       console.log(e); 
+    }
+
     if (error) {
         return res.send('server is not responding, try again');
     }
