@@ -1,20 +1,4 @@
 
-// Nav Tab functionality
-let listItems = document.querySelectorAll('.list-item');
-
-for (let item of listItems) {
-item.addEventListener('click',(event)=>{
-
-    listItems.forEach((listItem) => {
-        listItem.classList.remove('active');
-    });
-
-    event.currentTarget.classList.add('active');
-
-
-});
-
-}
 // navbar functionality
 
 const nav=document.querySelector('#navbar');

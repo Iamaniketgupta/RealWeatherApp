@@ -1,0 +1,31 @@
+<%- include('header.ejs') %>
+    <div class="feedback-form-main-wrapper">
+
+
+        <div class="feedback-form-wrapper">
+            <h3>Any Suggestion or Feedback ?</h3>
+            <form action="/feedback" method="post">
+                <div class="inp-item">
+                    <label for="name">Name</label>
+
+                    <input type="text" name="name" id="name" placeholder="Name" required>
+                </div>
+                <div class="inp-item">
+                    <label for="mail">Email</label>
+
+                    <input type="email" name="email" id="mail" placeholder="Email" required>
+                </div>
+                <div class="inp-item">
+                    <textarea name="feedback" cols="30" rows="10" placeholder="Your Valuable suggestions or feedback..."
+                        required></textarea>
+                </div>
+                <div class="inp-item">
+                    <button type="submit" class="submit-btn">Send</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <!-- form ends -->
+
+    <%- include('footer.ejs') %>

@@ -15,17 +15,17 @@ const PORT = process.env.PORT || 8000;
 const API_KEY = process.env.API_KEY;
 const EMAIL_ADD = process.env.EMAIL_ADD;
 const EMAIL_PASS = process.env.EMAIL_PASS;
-const auto_search =process.env.S_URL;
+const auto_search = process.env.S_URL;
 const url = process.env.API_URL;
 
 let data = {
     forecast_array: [],
 };
-  
+
 const result = async (q) => {
     error = false;
     try {
-            const response = await axios.get(
+        const response = await axios.get(
             `${url}?key=${API_KEY}&q=${q}&days=3&aqi=yes&alerts=yes`
         );
         data = {
@@ -57,7 +57,7 @@ const result = async (q) => {
     }
 };
 
-// Create Nodemailer transporter
+//  Nodemailer transporter
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -66,14 +66,17 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-// Function to send feedback email
+/*
+     Send feedback email
+*/
+
 async function sendMail(details) {
     const { email, name, feedback } = details;
 
     try {
         const info = await transporter.sendMail({
             from: EMAIL_ADD,
-            to: email, EMAIL_ADD,
+            to: email,
             subject: 'Thanks for Feedback!',
             text: `Hello ${name}, I will surely look into it.`,
             html: `<html><body> Your Feedback matters </br> to me: ${feedback}</body> </html>`,
@@ -84,35 +87,57 @@ async function sendMail(details) {
     }
 }
 
+/*
+    Hoome
+*/
+
 app.get("/", async (req, res) => {
 
-        const ip = req.socket.remoteAddress;
-        const geo = geoip.lookup(ip);
-        await result(geo);
+    let ip = req.socket.remoteAddress;
+    let geo = geoip.lookup(ip);
+    await result(geo);
 
-    res.render('index.ejs', {data});
+    res.render('index.ejs', { data });
 })
 
-// weather search routes
-app.get('/weather', async (req, res) => {
-    res.render('index.ejs', {data});
+/*
+    About
+*/
+
+app.get('/about', (req, res) => {
+    res.render('about.ejs');
 });
 
+/*
+    Feedback
+*/
+
+app.get('/feedback', (req, res) => {
+    res.render('feedback.ejs');
+});
+
+
+/* 
+    weather 
+*/
+
+app.get('/weather', (req, res) => {
+    res.render('index.ejs', { data });
+});
+
+
+/* 
+    weather search
+*/
 
 app.post('/weather', async (req, res) => {
     const q = req.body.q.trim();
-    if (!q) {
-        return;
-    }
     await result(q);
-   
     res.redirect("/weather");
-    
-
 });
- 
 
-// Feedback route 
+
+// Feedback process
 app.post('/feedback', (req, res) => {
     const details = req.body;
     sendMail(details);
@@ -124,15 +149,15 @@ app.get('/autocomplete', async (req, res) => {
     try {
         const qry = req.query.q;
         const respond = await axios.get(`${auto_search}?key=${API_KEY}&q=${qry}`);
-        const autocompleteData = respond.data; 
- 
+        const autocompleteData = respond.data;
+
         res.json(autocompleteData);
     } catch (error) {
         console.error('Autocomplete error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
- 
+
 
 app.listen(PORT, () => {
     console.log(`Listening at ${PORT}`);
