@@ -17,8 +17,8 @@ Follow these steps to install and run the NodeJS Weather Web App:
 1. **Clone the Repository:**
 
     ```bash
-    git clone https://github.com/yourusername/nodejs-weather-app.git
-    cd nodejs-weather-app
+    gh repo clone Iamaniketgupta/RealWeatherApp
+    cd RealWeatherApp
     ```
 
 2. **Install Dependencies:**
