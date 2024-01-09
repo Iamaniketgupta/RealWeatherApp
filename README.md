@@ -2,13 +2,13 @@
 
 Live Demo: [Real Weather App](https://realweather.onrender.com)
 
-# Images
+# Image
 
  ![Home](image.png)
 
 # NodeJS Weather Web App
 
-This NodeJS Weather Web App is a simple web application that allows users to check the current weather conditions for a specific location. It utilizes the OpenWeatherMap API to retrieve real-time weather data.
+This NodeJS Weather Web App is a simple web application that allows users to check the current weather conditions for a specific location. It utilizes the [WeatherAPI](https://www.weatherapi.com/) to retrieve real-time weather data.
 
 ## Installation
 
@@ -53,3 +53,5 @@ This NodeJS Weather Web App is licensed under the MIT License. Feel free to use,
 
 - **Aniket Gupta**
   - GitHub: [@iamaniketgupta](https://github.com/iamaniketgupta)
+
+
